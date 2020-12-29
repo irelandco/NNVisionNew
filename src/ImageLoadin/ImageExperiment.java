@@ -24,7 +24,7 @@ public class ImageExperiment {
 
     static Scanner inputStream = null;
 
-    static String imgString = "";
+    final static String imgString = "feet.png";
 
     public static void main(String[] args) {
 
@@ -64,7 +64,6 @@ public class ImageExperiment {
         System.out.println("\nFinding test image...");
         BufferedImage currImg;
         BufferedImage tower;
-        imgString = "bigd.jpg";
 
 
         try {
@@ -113,14 +112,21 @@ public class ImageExperiment {
         net.think(testInput);
 
         for (int i = 0; i < net.getOutput()[0].length; i++) {
+            double output = net.getOutput()[0][i];
             System.out.println("Prediction -> "
-                    + round(net.getOutput()[0][i] * 100) + "% chance of " + imgString + " being position " + i + ".");
+                    + round(output * 100) + "% chance of " + imgString + " being position " + i + ".");
+
+            if(output>=0.9) {
+                System.out.println("---==== ITS THERE ====---");
+            } else {
+                System.out.println("---==== NOT THERE ====---");
+            }
         }
     }
 
     private static void init_net() {
         try {
-            inputStream = new Scanner(new FileReader("/Users/Ralph/IdeaProjects/CompSciA/ImageNet.txt"));
+            inputStream = new Scanner(new FileReader(Neurons.netLocation));
         } catch (FileNotFoundException exception) {
             System.out.println("Failure to find file!");
         }

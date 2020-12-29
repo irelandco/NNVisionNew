@@ -13,6 +13,10 @@ import java.util.Scanner;
 
 public class ImageTest {
 
+    static final int TRAINING_ITERATIONS = 1000;
+    static final boolean RESUMING = true;
+    static final double LEARNING_RATE = 0.075;
+
     static double[][] inputs;
     static double[][] outputs;
 
@@ -29,7 +33,7 @@ public class ImageTest {
     public static void main(String[] args) {
 
         try {
-            inputStream = new Scanner(new FileReader("/Users/Ralph/IdeaProjects/CompSciA/ImageNet.txt"));
+            inputStream = new Scanner(new FileReader(Neurons.netLocation));
         } catch (FileNotFoundException exception) {
             System.out.println("Failure to find file!");
         }
@@ -38,8 +42,7 @@ public class ImageTest {
         NeuronLayer layer2 = new NeuronLayer(Neurons.two, Neurons.one);
         NeuronLayer layer3 = new NeuronLayer(Neurons.three, Neurons.two);
 
-        boolean resuming = true;
-        if (resuming) {
+        if (RESUMING) {
             //START
             if (inputStream != null) {
                 for (int i = 0; i < layer1.weights.length; ++i) {
@@ -63,24 +66,27 @@ public class ImageTest {
             //END
         }
 
-        ThreeLayerNet net = new ThreeLayerNet(layer1, layer2, layer3, 0.1);
+        ThreeLayerNet net = new ThreeLayerNet(layer1, layer2, layer3, LEARNING_RATE);
 
 
         System.out.println("Training the neural net...");
 
+        final int GOOD_SETS = 3;
         final int BAD_TESTS = 15, GOOD_TESTS = 15;
-        BufferedImage[] img = new BufferedImage[BAD_TESTS + GOOD_TESTS];
-        double[][] reds = new double[GOOD_TESTS + BAD_TESTS][Neurons.imgWidth * Neurons.imgHeight];
+        BufferedImage[] img = new BufferedImage[GOOD_TESTS*GOOD_SETS + BAD_TESTS];
+        double[][] reds = new double[GOOD_TESTS*GOOD_SETS + BAD_TESTS][Neurons.imgWidth * Neurons.imgHeight];
         try {
             for (int i = 1; i < 1 + BAD_TESTS; i++) {
                 img[i-1] = ImageIO.read(new File("img" + i + ".jpg"));
             }
 
-            for (int i = 1 + BAD_TESTS; i < 1 + BAD_TESTS + GOOD_TESTS; i++) {
-                img[i-1] = ImageIO.read(new File("img" + (i-BAD_TESTS) + " copy.jpg"));
+            for(int j = 0; j < GOOD_SETS; j++) {
+                for (int i = 1 + BAD_TESTS; i < 1 + BAD_TESTS + GOOD_TESTS; i++) {
+                    img[j*GOOD_TESTS+(i - 1)] = ImageIO.read(new File("img" + (i - BAD_TESTS) + " copy " + (j+1) + ".jpg"));
+                }
             }
 
-            for (int i = 0; i < BAD_TESTS + GOOD_TESTS; i++) {
+            for (int i = 0; i < (GOOD_TESTS*GOOD_SETS + BAD_TESTS); i++) {
                 BufferedImage currImg = img[i];
                 for (int y = 0; y < Neurons.imgHeight; y++) {
                     for (int x = 0; x < Neurons.imgWidth; x++) {
@@ -97,9 +103,9 @@ public class ImageTest {
 
 
         inputs = reds;
-        outputs = new double[BAD_TESTS + GOOD_TESTS][Neurons.three];
+        outputs = new double[GOOD_TESTS*GOOD_SETS + BAD_TESTS][Neurons.three];
 
-        for (int i = 0; i < BAD_TESTS + GOOD_TESTS; i++) {
+        for (int i = 0; i < (GOOD_TESTS*GOOD_SETS + BAD_TESTS); i++) {
             if (i < BAD_TESTS) {
                 outputs[i][0] = 0;
             } else {
@@ -140,7 +146,7 @@ public class ImageTest {
         //generateNew();
         //testValues();
         net.applyTests(testInputs, testOutputs);
-        net.train(inputs, outputs, 200);
+        net.train(inputs, outputs, TRAINING_ITERATIONS);
         System.out.println("Finished training.");
         net.exportNet();
         System.out.println("Net exported to file.");
