@@ -24,7 +24,7 @@ public class ImageExperiment {
 
     static Scanner inputStream = null;
 
-    final static String imgString = "feet.png";
+    final static String imgString = "renron.jpg";
 
     public static void main(String[] args) {
 
@@ -116,7 +116,7 @@ public class ImageExperiment {
             System.out.println("Prediction -> "
                     + round(output * 100) + "% chance of " + imgString + " being position " + i + ".");
 
-            if(output>=0.9) {
+            if(output>=0.5) {
                 System.out.println("---==== ITS THERE ====---");
             } else {
                 System.out.println("---==== NOT THERE ====---");

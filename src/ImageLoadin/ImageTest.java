@@ -15,7 +15,8 @@ public class ImageTest {
 
     static final int TRAINING_ITERATIONS = 1000;
     static final boolean RESUMING = true;
-    static final double LEARNING_RATE = 0.075;
+    static final double LEARNING_RATE = 0.0075;
+    static final int NUM_OF_TEST_IMAGES = 7;
 
     static double[][] inputs;
     static double[][] outputs;
@@ -71,8 +72,8 @@ public class ImageTest {
 
         System.out.println("Training the neural net...");
 
-        final int GOOD_SETS = 3;
-        final int BAD_TESTS = 15, GOOD_TESTS = 15;
+        final int GOOD_SETS = NUM_OF_TEST_IMAGES;
+        final int BAD_TESTS = 30, GOOD_TESTS = 15;
         BufferedImage[] img = new BufferedImage[GOOD_TESTS*GOOD_SETS + BAD_TESTS];
         double[][] reds = new double[GOOD_TESTS*GOOD_SETS + BAD_TESTS][Neurons.imgWidth * Neurons.imgHeight];
         try {
